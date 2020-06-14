@@ -23,3 +23,4 @@ bin/PA1 testcases/scene04_axes.txt output/scene04.bmp
 bin/PA1 testcases/scene05_bunny_200.txt output/scene05.bmp
 bin/PA1 testcases/scene06_bunny_1k.txt output/scene06.bmp
 bin/PA1 testcases/scene07_shine.txt output/scene07.bmp
+bin/PA1 testcases/scene08_dragon.txt output/scene08.bmp

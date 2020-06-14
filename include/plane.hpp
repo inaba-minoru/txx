@@ -1,35 +1,48 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include "object3d.hpp"
 #include <vecmath.h>
+
 #include <cmath>
 
-// TODO: Implement Plane representing an infinite plane
+#include "object3d.hpp"
+
+// TODO: Implement Plane representing an infinite plane ------ OK
 // function: ax+by+cz=d
 // choose your representation , add more fields and fill in the functions
-
+// 平面
 class Plane : public Object3D {
-public:
-    Plane() {
+   private:
+    Vector3f normal;  // 法线
+    float d;          // ax + by + cz = d
 
-    }
-
-    Plane(const Vector3f &normal, float d, Material *m) : Object3D(m) {
-
-    }
+   public:
+    Plane() = delete;
+    explicit Plane(const Vector3f &n, const float &d)
+        : normal(n), d(d), Object3D() {}
+    explicit Plane(const Vector3f &n, const float &d, Material *m)
+        : normal(n), d(d), Object3D(m) {}
 
     ~Plane() override = default;
 
     bool intersect(const Ray &r, Hit &h, float tmin) override {
+        if (Vector3f::dot(normal, r.getDirection()) == 0) {  // 光线与平面平行
+            return false;
+        }
+
+        float tt = (d - Vector3f::dot(normal, r.getOrigin())) /
+                   Vector3f::dot(normal, r.getDirection());
+
+        if (tt >= tmin && tt < h.getT()) {
+            h.set(tt, material,
+                  normal *
+                      (Vector3f::dot(normal, r.getDirection()) > 0 ? -1 : 1));
+
+            return true;
+        }
+
         return false;
     }
-
-protected:
-
-
 };
 
-#endif //PLANE_H
-		
-
+#endif  // PLANE_H
