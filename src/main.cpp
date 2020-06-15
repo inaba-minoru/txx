@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include <kdtree.hpp>
+#include <pt.hpp>
 #include <string>
 
 #include "camera.hpp"
@@ -13,7 +14,7 @@
 #include "light.hpp"
 #include "scene_parser.hpp"
 
-using namespace std;
+// using namespace std;
 
 int main(int argc, char *argv[]) {
     for (int argNum = 1; argNum < argc; ++argNum) {
@@ -22,7 +23,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (argc != 3) {
-        cout << "Usage: ./bin/PA1 <input scene file> <output bmp file>" << endl;
+        std::cout << "Usage: ./bin/PA1 <input scene file> <output bmp file>"
+                  << endl;
         return 1;
     }
     string inputFile = argv[1];
@@ -42,31 +44,27 @@ int main(int argc, char *argv[]) {
 
     Image image(camera->getWidth(), camera->getHeight());
 
-    for (int x = 0; x < camera->getWidth(); ++x) {
-        for (int y = 0; y < camera->getHeight(); ++y) {
-            Ray camRay = camera->generateRay(Vector2f(x, y));
-            Group *baseGroup = sceneParser.getGroup();
-            Hit hit;
-            // bool isIntersect = baseGroup->intersect(camRay, hit, 0);
-            bool isIntersect = kdtree.intersect(camRay, hit, 0);
-            if (isIntersect) {
-                Vector3f finalColor = Vector3f::ZERO;
-                for (int li = 0; li < sceneParser.getNumLights(); ++li) {
-                    Light *light = sceneParser.getLight(li);
-                    Vector3f L, lightColor;
-                    light->getIllumination(camRay.pointAtParameter(hit.getT()),
-                                           L, lightColor);
-                    finalColor +=
-                        hit.getMaterial()->Shade(camRay, hit, L, lightColor);
-                }
-                image.SetPixel(x, y, finalColor);
-            } else {
-                image.SetPixel(x, y, sceneParser.getBackgroundColor());
-            }
-        }
+    float dir[8][2] = {{-0.5, -0.5}, {-0.5, 0.5}, {0.5, -0.5}, {0.5, 0.5},
+                       {-0.5, 0},    {0, -0.5},   {0.5, 0},    {0, 0.5}};
+
+#pragma omp parallel for schedule(guided)
+    for (int pixel = 0; pixel < camera->getWidth() * camera->getHeight();
+         ++pixel) {
+        int x = pixel / camera->getHeight();
+        int y = pixel % camera->getHeight();
+
+        Vector3f color_sum = Vector3f::ZERO;
+
+        Ray camRay = camera->generateRay(Vector2f(x, y));
+
+        for (int iter = 0; iter < 1000; ++iter)
+            color_sum += radiance(sceneParser, kdtree, camRay, 1e-3, 0, 1);
+
+#pragma omp critical
+        image.SetPixel(x, y, color_sum / 1000);
     }
     image.SaveBMP(outputFile.c_str());
 
-    cout << "Hello! Computer Graphics!" << endl;
+    std::cout << "Hello! Computer Graphics!" << endl;
     return 0;
 }

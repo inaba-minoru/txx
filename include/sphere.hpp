@@ -34,11 +34,15 @@ class Sphere : public Object3D {
 
         float t_ = sqrt(radius * radius - d2);  // 垂足到球面
         float tt;
-        if (l.squaredLength() < radius * radius) {  // 若光源在球内
-            tt = t + t_;
-        } else {  // 光源在球外
+        if (t - t_ >= tmin)
             tt = t - t_;
-        }
+        else
+            t = t + t_;
+        // if (l.squaredLength() < radius * radius) {  // 若光源在球内
+        //     tt = t + t_;
+        // } else {  // 光源在球外
+        //     tt = t - t_;
+        // }
 
         tt /= r.getDirection().length();
 

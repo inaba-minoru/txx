@@ -56,13 +56,13 @@ class KDTree {
                       max(u->ls->box.pmax, u->rs->box.pmax));
         return u;
     }
-    bool intersect(const Ray &r, Hit &h, const float &tmin) {
+    bool intersect(const Ray &r, Hit &h, const float &tmin) const {
         if (root)
             return intersect(root, r, h, tmin);
         else
             return 0;
     }
-    bool intersect(Node *u, const Ray &r, Hit &h, const float &tmin) {
+    bool intersect(Node *u, const Ray &r, Hit &h, const float &tmin) const {
         if (!u->box.intersect(r)) return 0;
         if (!u->ls) return u->box.obj->intersect(r, h, tmin);
 
