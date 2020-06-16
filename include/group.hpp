@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+
 #include "hit.hpp"
 #include "object3d.hpp"
 #include "ray.hpp"
@@ -23,7 +24,7 @@ class Group : public Object3D {
         }
     }
 
-    bool intersect(const Ray &r, Hit &h, float tmin) override {
+    bool intersect(const Ray &r, Hit &h, double tmin) {
         bool isIntersect = false;
         for (size_t i = 0; i < objects.size(); i++) {
             isIntersect |= objects[i]->intersect(r, h, tmin);

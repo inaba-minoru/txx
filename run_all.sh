@@ -16,6 +16,7 @@ cd ..
 # Run all testcases. 
 # You can comment some lines to disable the run of specific examples.
 mkdir -p output
+time bin/PA1 testcases/scene00.txt output/scene00.bmp
 time bin/PA1 testcases/scene01_basic.txt output/scene01.bmp
 time bin/PA1 testcases/scene02_cube.txt output/scene02.bmp
 time bin/PA1 testcases/scene03_sphere.txt output/scene03.bmp

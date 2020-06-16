@@ -14,23 +14,23 @@
 class Plane : public Object3D {
    private:
     Vector3f normal;  // 法线
-    float d;          // ax + by + cz = d
+    double d;          // ax + by + cz = d
 
    public:
     Plane() = delete;
-    explicit Plane(const Vector3f &n, const float &d)
+    explicit Plane(const Vector3f &n, const double &d)
         : normal(n), d(d), Object3D() {}
-    explicit Plane(const Vector3f &n, const float &d, Material *m)
+    explicit Plane(const Vector3f &n, const double &d, Material *m)
         : normal(n), d(d), Object3D(m) {}
 
     ~Plane() override = default;
 
-    bool intersect(const Ray &r, Hit &h, float tmin) override {
+    bool intersect(const Ray &r, Hit &h, double tmin) override {
         if (Vector3f::dot(normal, r.getDirection()) == 0) {  // 光线与平面平行
             return false;
         }
 
-        float tt = (d - Vector3f::dot(normal, r.getOrigin())) /
+        double tt = (d - Vector3f::dot(normal, r.getOrigin())) /
                    Vector3f::dot(normal, r.getDirection());
 
         if (tt >= tmin && tt < h.getT()) {

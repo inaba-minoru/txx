@@ -29,7 +29,7 @@ class Triangle : public Object3D {
 
     ~Triangle() override = default;
 
-    bool intersect(const Ray &r, Hit &h, float tmin) override {
+    bool intersect(const Ray &r, Hit &h, double tmin) override {
         Vector3f E1 = vertices[0] - vertices[1], E2 = vertices[0] - vertices[2],
                  S = vertices[0] - r.getOrigin();
         Vector3f tby =

@@ -28,7 +28,7 @@ class Mesh : public Object3D {
     std::vector<Vector3f> v;
     std::vector<TriangleIndex> t;
     std::vector<Vector3f> n;
-    bool intersect(const Ray &r, Hit &h, float tmin) override;
+    bool intersect(const Ray &r, Hit &h, double tmin) override;
 
     void getAABB(std::vector<AABB> &vec) {
         for (int triId = 0; triId < (int)t.size(); ++triId) {

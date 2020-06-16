@@ -44,7 +44,7 @@ class AABB {
 
     bool intersect(const Ray &r) const {
         Vector3f orig = r.getOrigin(), dir = r.getDirection();
-        float tin = __FLT_MIN__, tout = __FLT_MAX__, t1, t2;
+        double tin = __FLT_MIN__, tout = __FLT_MAX__, t1, t2;
 
         for (int i = 0; i < 3; i++) {
             if (dir[i] == 0)                                   // 平行

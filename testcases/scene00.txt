@@ -1,0 +1,113 @@
+PerspectiveCamera {
+    center 50 52 295.6
+    direction 0. -0.042612 -1
+    up 0 1 0
+    angle 30
+    width 1024
+    height 768
+}
+
+Lights {
+    numLights 1
+    PointLight {
+        position 0.0 5 5
+        color 0.9 0.9 0.9 
+    }
+}
+
+Background {
+    color 0 0 0
+}
+
+Materials {
+    numMaterials 7
+    Material {
+        diffuseColor 1 0 0
+        eta 10
+        alpha_g 0.01
+        emission 0 0 0
+    }
+    Material {
+        diffuseColor 0 0 1
+        eta 10
+        alpha_g 0.99
+        emission 0 0 0
+    }
+    Material {
+        diffuseColor 1 1 1
+        eta 1000000
+        alpha_g 0.3
+        emission 0 0 0
+    }
+    Material {
+        diffuseColor 1 1 1
+        eta 10
+        alpha_g 0.99
+        emission 0 0 0
+    }
+    Material {
+        diffuseColor 0.999 0.999 0.999
+        eta 100
+        alpha_g 0.0001
+        emission 0 0 0
+    }
+    Material {
+        diffuseColor 0.999 0.999 0.999
+        eta 1.5
+        alpha_g 0.0001
+        emission 0 0 0
+    }
+    Material {
+        diffuseColor 0 0 0
+        eta 10
+        alpha_g 0.99
+        emission 12 12 12
+    }
+}
+
+Group {
+    numObjects 9
+    MaterialIndex 0
+    Sphere {
+        center 100000 40.8 81.6
+        radius 100000
+    }
+    MaterialIndex 1
+    Sphere {
+        center -99901 40.8 81.6
+        radius 100000
+    }
+    MaterialIndex 2
+    Sphere {
+        center 50 40.8 100000
+        radius 100000
+    }
+    Sphere {
+        center 50 100000 81.6
+        radius 100000
+    }
+    Sphere {
+        center 50 -99918.4 81.6
+        radius 100000
+    }
+    MaterialIndex 3
+    Sphere {
+        center 50 40.8 -99830
+        radius 100000
+    }
+    MaterialIndex 4
+    Sphere {
+        center 27 16.5 47
+        radius 16.5
+    }
+    MaterialIndex 5
+    Sphere {
+        center 73 16.5 78
+        radius 16.5
+    }
+    MaterialIndex 6
+    Sphere {
+        center 50 681.33 81.6
+        radius 600
+    }
+}

@@ -4,8 +4,8 @@ PerspectiveCamera {
     direction 0 0 -1
     up 0 1 0
     angle 30
-    width 200
-    height 200
+    width 1024
+    height 768
 }
 
 Lights {
@@ -25,12 +25,23 @@ Materials {
     Material { diffuseColor 1 0 0 
       specularColor 1 1 1
       shininess 20
+        eta 100
+        alpha_g 0.9
     }
-    Material { diffuseColor 0 1 0 }
-    Material { diffuseColor 0 0 1 }
+    Material { diffuseColor 0 1 0 
+    alpha_g 0.1}
+    Material { 
+        diffuseColor 0 0 1
+        eta 1.33
+        alpha_g 0.1
+    }
     Material { diffuseColor 1 1 1 
 	specularColor 1 1 1
-	shininess 20}
+	shininess 20
+    eta 1.33
+    alpha_g 1
+        emission 0.9 0.9 0.9
+    }
 }
 
 Group {
