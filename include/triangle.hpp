@@ -14,21 +14,24 @@ using namespace std;
 class Triangle : public Object3D {
    public:
     Vector3f vertices[3];  // 三顶点
-    Vector3f normal;       // 法线
+    Vector3f normals[3];   // 法线
 
     Triangle() = delete;
     explicit Triangle(const Vector3f &a, const Vector3f &b, const Vector3f &c)
         : vertices({a, b, c}), Object3D() {
-        normal = Vector3f::cross(b - a, c - a).normalized();
+        normals[0] = normals[1] = normals[2] =
+            Vector3f::cross(b - a, c - a).normalized();
     }
     explicit Triangle(const Vector3f &a, const Vector3f &b, const Vector3f &c,
                       Material *m)
         : vertices({a, b, c}), Object3D(m) {
-        normal = Vector3f::cross(b - a, c - a).normalized();
+        normals[0] = normals[1] = normals[2] =
+            Vector3f::cross(b - a, c - a).normalized();
     }
     explicit Triangle(const Vector3f &a, const Vector3f &b, const Vector3f &c,
-                      const Vector3f &n, Material *m)
-        : vertices({a, b, c}), normal(n), Object3D(m) {}
+                      const Vector3f &n0, const Vector3f &n1,
+                      const Vector3f &n2, Material *m)
+        : vertices({a, b, c}), normals({n0, n1, n2}), Object3D(m) {}
 
     ~Triangle() override = default;
 
@@ -41,15 +44,40 @@ class Triangle : public Object3D {
                      Matrix3f(r.getDirection(), E1, S).determinant()) /
             Matrix3f(r.getDirection(), E1, E2).determinant();
 
+        // tby.print();
+
         if (tby.x() >= tmin && tby.x() < h.getT() && 0 <= tby.y() &&
             0 <= tby.z() && tby.y() + tby.z() <= 1) {
+            Vector3f norm = ((1 - tby.y() - tby.z()) * normals[0] +
+                             tby.y() * normals[1] + tby.z() * normals[2])
+                                .normalized();
+            // Vector3f norm = Vector3f::cross(vertices[0] - vertices[1],
+            //                                 vertices[0] - vertices[2])
+            //                     .normalized();
+            // printf("%lf\n", Vector3f::dot(norm, norm_));
+
             h.set(tby.x(), material,
-                  normal *
-                      (Vector3f::dot(normal, r.getDirection()) > 0 ? -1 : 1));
+                  norm * (Vector3f::dot(norm, r.getDirection()) > 0 ? -1 : 1));
+
+            if (hasTex)
+                h.setTexCoord(((1 - tby.y() - tby.z()) * texCoords[0] +
+                               tby.y() * texCoords[1] +
+                               tby.z() * texCoords[2]));
+
             return true;
         }
 
         return false;
+    }
+
+    bool hasTex = 0;
+    Vector2f texCoords[3];  // 贴图
+    void setTexCoords(const Vector2f &texCoord0, const Vector2f &texCoord1,
+                      const Vector2f &texCoord2) {
+        this->texCoords[0] = texCoord0;
+        this->texCoords[1] = texCoord1;
+        this->texCoords[2] = texCoord2;
+        hasTex = 1;
     }
 };
 

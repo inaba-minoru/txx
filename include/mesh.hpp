@@ -21,16 +21,20 @@ class Mesh : public Object3D {
             x[0] = 0;
             x[1] = 0;
             x[2] = 0;
+
+            texID[0] = -1;
         }
         int &operator[](const int i) { return x[i]; }
         // By Computer Graphics convention, counterclockwise winding is front
         // face
         int x[3]{};
+        int texID[3]{};
     };
 
     std::vector<Vector3f> v;
     std::vector<TriangleIndex> t;
     std::vector<Vector3f> n;
+    std::vector<Vector2f> texCoord;
     bool intersect(const Ray &r, Hit &h, double tmin) override;
 
     // void getAABB(std::vector<AABB> &vec) {

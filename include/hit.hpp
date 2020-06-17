@@ -2,13 +2,13 @@
 #define HIT_H
 
 #include <vecmath.h>
+
 #include "ray.hpp"
 
 class Material;
 
 class Hit {
-public:
-
+   public:
     // constructors
     Hit() {
         material = nullptr;
@@ -30,29 +30,31 @@ public:
     // destructor
     ~Hit() = default;
 
-    double getT() const {
-        return t;
-    }
+    double getT() const { return t; }
 
-    Material *getMaterial() const {
-        return material;
-    }
+    Material *getMaterial() const { return material; }
 
-    const Vector3f &getNormal() const {
-        return normal;
-    }
+    const Vector3f &getNormal() const { return normal; }
 
-    void set(double _t, Material *m, const Vector3f &n) {
+    void set(double _t, Material *m, const Vector3f &n, const bool &hold = 0) {
         t = _t;
         material = m;
         normal = n;
+
+        if (!hold) hasTex = 0;
     }
 
-private:
+    bool hasTex = 0;
+    Vector2f texCoord;
+    void setTexCoord(const Vector2f &texCoord) {
+        this->texCoord = texCoord;
+        hasTex = 1;
+    }
+
+   private:
     double t;
     Material *material;
     Vector3f normal;
-
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Hit &h) {
@@ -60,4 +62,4 @@ inline std::ostream &operator<<(std::ostream &os, const Hit &h) {
     return os;
 }
 
-#endif // HIT_H
+#endif  // HIT_H

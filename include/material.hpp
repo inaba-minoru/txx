@@ -30,9 +30,6 @@ class Material {
 
     virtual ~Material() = default;
 
-    Texture t;
-    void loadTexture(const char *filename) { t.load(filename); }
-
     virtual Vector3f getDiffuseColor() const { return diffuseColor; }
 
     Vector3f Shade(const Ray &ray, const Hit &hit, const Vector3f &dirToLight,
@@ -75,6 +72,10 @@ class Material {
 
         // return shaded;
     }
+
+    
+    Texture texture;
+    void loadTexture(const char *filename) { texture.load(filename); }
 
    public:
     // double kd = 0.0;  // 漫反射占比

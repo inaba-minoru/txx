@@ -14,7 +14,8 @@
 #include <scene_parser.hpp>
 
 Vector3f min(const Vector3f &x, const Vector3f &y) {
-    return Vector3f(std::min(x.x(), y.x()), std::min(x.y(), y.y()), std::min(x.z(), y.z()));
+    return Vector3f(std::min(x.x(), y.x()), std::min(x.y(), y.y()),
+                    std::min(x.z(), y.z()));
 }
 
 Vector3f calcDiffuseOutDir(const Vector3f &in_dir, const Vector3f &norm) {
@@ -97,12 +98,18 @@ Vector3f radiance(unsigned short *Xi, const SceneParser &scene_parser,
     double weight, new_eta;
     sample(Xi, -ray.getDirection(), hit.getNormal(), o, weight, new_eta,
            n > 1 ? 1 : material->eta, n, material->alpha_g, material->alpha_g2);
+    Vector3f myColor;
+    if (hit.hasTex && material->texture.valid())
+        myColor = material->texture(hit.texCoord.x(), hit.texCoord.y());
+    else
+        myColor = material->diffuseColor;
+
     Vector3f color = radiance(Xi, scene_parser, Ray(hit_point, o), tmin,
                               depth + 1, new_eta) *
                      //  material->diffuseColor *
                      //   fs(o, -ray.getDirection(), hit.getNormal(),
                      //  n > 1 ? 1 : material->eta, n, material->alpha_g2) *
-                     weight * material->diffuseColor;
+                     weight * myColor;
 
     // if (hit.getNormal().y()<-0.9)
     // {

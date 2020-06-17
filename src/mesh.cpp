@@ -7,20 +7,21 @@
 #include <kdtree.hpp>
 #include <sstream>
 #include <utility>
+#include <vector>
 
 bool Mesh::intersect(const Ray &r, Hit &h, double tmin) {
     return kdtree->intersect(r, h, tmin);
 
     // Optional: Change this brute force method into a faster one.
-    bool result = false;
-    for (int triId = 0; triId < (int)t.size(); ++triId) {
-        TriangleIndex &triIndex = t[triId];
-        Triangle triangle(v[triIndex[0]], v[triIndex[1]], v[triIndex[2]],
-                          material);
-        triangle.normal = n[triId];
-        result |= triangle.intersect(r, h, tmin);
-    }
-    return result;
+    // bool result = false;
+    // for (int triId = 0; triId < (int)t.size(); ++triId) {
+    //     TriangleIndex &triIndex = t[triId];
+    //     Triangle triangle(v[triIndex[0]], v[triIndex[1]], v[triIndex[2]],
+    //                       material);
+    //     triangle.normal = n[triId];
+    //     result |= triangle.intersect(r, h, tmin);
+    // }
+    // return result;
 }
 
 Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
@@ -37,7 +38,7 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
     std::string texTok("vt");
     char bslash = '/', space = ' ';
     std::string tok;
-    int texID;
+    // int texID;
     while (true) {
         std::getline(f, line);
         if (f.eof()) {
@@ -55,6 +56,7 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
             Vector3f vec;
             ss >> vec[0] >> vec[1] >> vec[2];
             v.push_back(vec);
+            n.push_back(0);
         } else if (tok == fTok) {
             if (line.find(bslash) != std::string::npos) {
                 std::replace(line.begin(), line.end(), bslash, space);
@@ -62,8 +64,9 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
                 TriangleIndex trig;
                 facess >> tok;
                 for (int ii = 0; ii < 3; ii++) {
-                    facess >> trig[ii] >> texID;
+                    facess >> trig[ii] >> trig.texID[ii];
                     trig[ii]--;
+                    trig.texID[ii]--;
                 }
                 t.push_back(trig);
             } else {
@@ -78,6 +81,7 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
             Vector2f texcoord;
             ss >> texcoord[0];
             ss >> texcoord[1];
+            texCoord.push_back(texcoord);
         }
     }
     computeNormal();
@@ -88,8 +92,13 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
     vector<AABB> vec;
     for (unsigned int triId = 0; triId < t.size(); ++triId) {
         TriangleIndex &triIndex = t[triId];
-        Triangle *triangle = new Triangle(v[triIndex[0]], v[triIndex[1]],
-                                          v[triIndex[2]], n[triId], material);
+        Triangle *triangle = new Triangle(
+            v[triIndex[0]], v[triIndex[1]], v[triIndex[2]], n[triIndex[0]],
+            n[triIndex[1]], n[triIndex[2]], material);
+        if (triIndex.texID[0] != -1)
+            triangle->setTexCoords(texCoord[triIndex.texID[0]],
+                                   texCoord[triIndex.texID[1]],
+                                   texCoord[triIndex.texID[2]]);
         vec.push_back(AABB(triangle));
     }
     kdtree = new KDTree(vec.begin(), vec.size());
@@ -103,6 +112,10 @@ void Mesh::computeNormal() {
         Vector3f a = v[triIndex[1]] - v[triIndex[0]];
         Vector3f b = v[triIndex[2]] - v[triIndex[0]];
         b = Vector3f::cross(a, b);
-        n[triId] = b / b.length();
+        for (size_t i = 0; i < 3; i++) n[triIndex[i]] += b;
+
+        // n[triId] = b / b.length();
     }
+
+    for (size_t i = 0; i < v.size(); i++) n[i].normalize();
 }

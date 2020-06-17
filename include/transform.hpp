@@ -2,6 +2,7 @@
 #define TRANSFORM_H
 
 #include <vecmath.h>
+
 #include "object3d.hpp"
 
 // transforms a 3D point using a matrix, returning a 3D point
@@ -14,17 +15,17 @@ static Vector3f transformDirection(const Matrix4f &mat, const Vector3f &dir) {
     return (mat * Vector4f(dir, 0)).xyz();
 }
 
-// TODO: implement this class so that the intersect function first transforms the ray
+// TODO: implement this class so that the intersect function first transforms
+// the ray
 class Transform : public Object3D {
-public:
+   public:
     Transform() {}
 
     Transform(const Matrix4f &m, Object3D *obj) : o(obj) {
         transform = m.inverse();
     }
 
-    ~Transform() {
-    }
+    ~Transform() {}
 
     virtual bool intersect(const Ray &r, Hit &h, double tmin) {
         Vector3f trSource = transformPoint(transform, r.getOrigin());
@@ -32,14 +33,17 @@ public:
         Ray tr(trSource, trDirection);
         bool inter = o->intersect(tr, h, tmin);
         if (inter) {
-            h.set(h.getT(), h.getMaterial(), transformDirection(transform.transposed(), h.getNormal()).normalized());
+            h.set(h.getT(), h.getMaterial(),
+                  transformDirection(transform.transposed(), h.getNormal())
+                      .normalized(),
+                  1);
         }
         return inter;
     }
 
-protected:
-    Object3D *o; //un-transformed object
+   protected:
+    Object3D *o;  // un-transformed object
     Matrix4f transform;
 };
 
-#endif //TRANSFORM_H
+#endif  // TRANSFORM_H
