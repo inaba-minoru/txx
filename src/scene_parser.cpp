@@ -1,6 +1,7 @@
 #include "scene_parser.hpp"
 
 // #include <aabb.hpp>
+#include <bezier.hpp>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -293,6 +294,10 @@ Object3D *SceneParser::parseObject(char token[MAX_PARSER_TOKEN_LENGTH]) {
         answer = (Object3D *)parseTriangleMesh();
     } else if (!strcmp(token, "Transform")) {
         answer = (Object3D *)parseTransform();
+    } else if (!strcmp(token, "BezierCurve")) {
+        answer = (Object3D *)parseBezierCurve();
+    } else if (!strcmp(token, "RevSurface")) {
+        answer = (Object3D *)parseRevSurface();
     } else {
         printf("Unknown token in parseObject: '%s'\n", token);
         exit(0);
@@ -424,6 +429,50 @@ Mesh *SceneParser::parseTriangleMesh() {
 
     // answer->getAABB(a_aabb);
 
+    return answer;
+}
+
+BezierCurve *SceneParser::parseBezierCurve() {
+    char token[MAX_PARSER_TOKEN_LENGTH];
+    getToken(token);
+    assert(!strcmp(token, "{"));
+    getToken(token);
+    assert(!strcmp(token, "controls"));
+    vector<Vector3f> controls;
+    while (true) {
+        getToken(token);
+        if (!strcmp(token, "[")) {
+            controls.push_back(readVector3f());
+            getToken(token);
+            assert(!strcmp(token, "]"));
+        } else if (!strcmp(token, "}")) {
+            break;
+        } else {
+            printf("Incorrect format for BezierCurve!\n");
+            exit(0);
+        }
+    }
+    BezierCurve *answer = new BezierCurve(controls);
+    return answer;
+}
+
+BezierRotator *SceneParser::parseRevSurface() {
+    char token[MAX_PARSER_TOKEN_LENGTH];
+    getToken(token);
+    assert(!strcmp(token, "{"));
+    getToken(token);
+    assert(!strcmp(token, "profile"));
+    BezierCurve *profile;
+    getToken(token);
+    if (!strcmp(token, "BezierCurve")) {
+        profile = parseBezierCurve();
+    } else {
+        printf("Unknown profile type in parseRevSurface: '%s'\n", token);
+        exit(0);
+    }
+    getToken(token);
+    assert(!strcmp(token, "}"));
+    auto *answer = new BezierRotator(Vector3f(), *profile, current_material);
     return answer;
 }
 

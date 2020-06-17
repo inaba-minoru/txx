@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iostream>
 // #include <kdtree.hpp>
+#include <algorithm>
 #include <pt.hpp>
 #include <string>
 
@@ -57,63 +58,95 @@ int main(int argc, char* argv[]) {
     double dir[8][2] = {{-0.5, -0.5}, {-0.5, 0.5}, {0.5, -0.5}, {0.5, 0.5},
                         {-0.5, 0},    {0, -0.5},   {0.5, 0},    {0, 0.5}};
 
-    // #pragma omp parallel
-    //     {
-    //         unsigned short Xi[3];
+    int N = 9;
+    int samps = 100 / N;
 
-    // #pragma omp for schedule(guided)
-    //         for (int pixel = 0; pixel < camera->getWidth() *
-    //         camera->getHeight();
-    //              ++pixel) {
-    //             int x = pixel / camera->getHeight();
-    //             int y = pixel % camera->getHeight();
-    //             // Xi[2] = pixel * pixel * pixel;
+#pragma omp parallel
+    {
+        unsigned short Xi[3];
 
-    //             Vector3f color_sum = Vector3f::ZERO;
+#pragma omp for schedule(dynamic, 1)
+        for (int pixel = 0; pixel < camera->getWidth() * camera->getHeight();
+             ++pixel) {
+            fprintf(stderr, "\rRendering (%d spp) %5.2f%%", samps * N,
+                    100. * pixel / (camera->getHeight() * camera->getWidth()));
 
-    //             Ray camRay = camera->generateRay(Vector2f(x, y));
+            int x = pixel / camera->getHeight();
+            int y = pixel % camera->getHeight();
 
-    //             for (int iter = 0; iter < 100; ++iter) {
-    //                 color_sum += radiance(Xi, sceneParser, kdtree, camRay, 1,
-    //                 0, 1);
-    //             }
+            Xi[2] = pixel * pixel * pixel;
 
-    // #pragma omp critical
-    //             image.SetPixel(x, y, color_sum / 100);
-    //         }
-    //     }
-
-    int h = camera->getHeight();
-    int w = camera->getWidth();
-    int samps = 100 / 4;
-
-    Vector3f r, t;
-
-#pragma omp parallel for schedule(dynamic, 1) private(r, t)  // OpenMP
-    for (int y = 0; y < camera->getHeight(); y++) {  // Loop over image rows
-        fprintf(stderr, "\rRendering (%d spp) %5.2f%%", samps * 4,
-                100. * y / (h - 1));
-        for (unsigned short x = 0, Xi[3] = {0, 0, y * y * y};
-             x < camera->getWidth(); x++, r = Vector3f()) {  // Loop cols
-            for (int sy = 0; sy < 2; sy++)  // 2x2 subpixel rows
-                for (int sx = 0; sx < 2;
-                     sx++, t = Vector3f()) {  // 2x2 subpixel cols
-                    for (int s = 0; s < samps; s++) {
-                        double r1 = 2 * erand48(Xi),
-                               dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 - r1);
-                        double r2 = 2 * erand48(Xi),
-                               dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
-                        Ray camRay = camera->generateRay(
-                            Vector2f(sx + dx + x, sy + dy + y));
-                        t += radiance(Xi, sceneParser, camRay, 1e-4, 0, 1) *
-                             (1. / samps);
-                    }  // Camera rays are pushed ^^^^^ forward to start in
-                    r += clamp(t) / 4;
+            bool rooks[9]{};
+            Vector3f sum(0);
+            for (int i = 0, j, idx; i < N; i++) {
+                //
+                idx = erand48(Xi) * (N - i) + 1;
+                for (j = 0; j < N; j++) {
+                    idx -= !rooks[j];
+                    if (!idx) break;
                 }
+                rooks[j] = 1;
+                //
+                assert(j < N);
+                Ray camRay = camera->generateRay(
+                    Vector2f(x - (N / 2 + i) / N, y - (N / 2 + j) / N));
+                Vector3f temp(0);
+                for (int k = 0; k < samps; ++k)
+                    temp +=
+                        radiance(Xi, sceneParser, camRay, 1e-4, 0, 1) / samps;
+                sum += clamp(temp) / N;
+            }
 #pragma omp critical
-            image.SetPixel(x, y, gamma(r));
+            image.SetPixel(x, y, gamma(sum));
+
+            // Vector3f color_sum = Vector3f::ZERO;
+
+            // Ray camRay = camera->generateRay(Vector2f(x, y));
+
+            // for (int s = 0; s < samps; s++)
+            //     color_sum +=
+            //         radiance(Xi, sceneParser, camRay, 1e-4, 0, 1) / samps;
+
+            // #pragma omp critical
+            //             image.SetPixel(x, y, gamma(color_sum));
         }
     }
+
+    //     int h = camera->getHeight();
+    //     int w = camera->getWidth();
+    //     int samps = 100 / 4;
+
+    //     Vector3f r, t;
+
+    // #pragma omp parallel for schedule(dynamic, 1) private(r, t)  // OpenMP
+    //     for (int y = 0; y < camera->getHeight(); y++) {  // Loop over image
+    //     rows
+    //         fprintf(stderr, "\rRendering (%d spp) %5.2f%%", samps * 4,
+    //                 100. * y / (h - 1));
+    //         for (unsigned short x = 0, Xi[3] = {0, 0, y * y * y};
+    //              x < camera->getWidth(); x++, r = Vector3f()) {  // Loop cols
+    //             for (int sy = 0; sy < 2; sy++)  // 2x2 subpixel rows
+    //                 for (int sx = 0; sx < 2;
+    //                      sx++, t = Vector3f()) {  // 2x2 subpixel cols
+    //                     for (int s = 0; s < samps; s++) {
+    //                         double r1 = 2 * erand48(Xi),
+    //                                dx = r1 < 1 ? sqrt(r1) - 1 : 1 - sqrt(2 -
+    //                                r1);
+    //                         double r2 = 2 * erand48(Xi),
+    //                                dy = r2 < 1 ? sqrt(r2) - 1 : 1 - sqrt(2 -
+    //                                r2);
+    //                         Ray camRay = camera->generateRay(
+    //                             Vector2f(sx + dx + x, sy + dy + y));
+    //                         t += radiance(Xi, sceneParser, camRay, 1e-4, 0,
+    //                         1) *
+    //                              (1. / samps);
+    //                     }  // Camera rays are pushed ^^^^^ forward to start
+    //                     in r += clamp(t) / 4;
+    //                 }
+    // #pragma omp critical
+    //             image.SetPixel(x, y, gamma(r));
+    //         }
+    //     }
 
     image.SaveBMP(outputFile.c_str());
 

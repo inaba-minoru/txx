@@ -79,8 +79,10 @@ Materials {
     Material {
         diffuseColor 1 1 1
 
-        eta 1.3
-        alpha_g 0.035
+        eta 100
+        alpha_g 0.5
+
+	    texture tex/vase.bmp
     }
 }
 
@@ -91,10 +93,18 @@ Group {
     MaterialIndex 8
     Transform {
 	    Translate  -2 -5.5 -7
-	    Scale  12 12 12 
-		TriangleMesh {
-			obj_file mesh/bunny_1k.obj
-		}
+    RevSurface {
+        profile BezierCurve {
+            controls
+                [ 1.25 0 0 ]
+                [ 1.75 1.5 0 ]
+                [ 2 2 0 ]
+                [ 1.75 2.5 0 ]
+                [ 1.25 3 0 ]
+                [ 0.8 5 0 ]
+                [ 1 7 0 ]
+        }
+    }
 	}
 
     MaterialIndex 0

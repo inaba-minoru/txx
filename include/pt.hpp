@@ -73,21 +73,20 @@ Vector3f radiance(unsigned short *Xi, const SceneParser &scene_parser,
     // if (material->emission.length() != 0)
 
     // 光源提供来源（直接）
-    // Vector3f light_color = Vector3f::ZERO;
-    // for (int i = 0; i < scene_parser.getNumLights(); ++i) {
-    //     Vector3f dir, col;
-    //     Hit temphit;
-    //     scene_parser.getLight(i)->getIllumination(hit_point, dir, col);
-    //     if (!kdtree.intersect(Ray(hit_point, dir), temphit, tmin))
-    // 无遮挡
-    // light_color += hit.getMaterial()->Shade(ray, hit, dir, col);
-    // light_color += hit.getMaterial()->CookTorrance(ray, hit, dir,
-    // col);
-    // light_color += fs(dir, -ray.getDirection(), hit.getNormal(),
-    //                   n > 1 ? 1 : 30, n, 0.0001) *
-    //                col * material->diffuseColor;
-    // *M_PI;
-    // }
+    Vector3f light_color = Vector3f::ZERO;
+    for (int i = 0; i < scene_parser.getNumLights(); ++i) {
+        Vector3f dir, col;
+        Hit temphit;
+        scene_parser.getLight(i)->getIllumination(hit_point, dir, col);
+        if (!scene_parser.getGroup()->intersect(Ray(hit_point, dir), temphit,
+                                                tmin))  //无遮挡
+            light_color += hit.getMaterial()->Shade(ray, hit, dir, col);
+        // light_color += hit.getMaterial()->CookTorrance(ray, hit, dir, col);
+        // light_color += fs(dir, -ray.getDirection(), hit.getNormal(),
+        //                   n > 1 ? 1 : 30, n, 0.0001) *
+        //                col * material->diffuseColor;
+        // *M_PI;
+    }
     //
 
     // 漫反射、反射、折射提供来源（间接）
@@ -157,7 +156,7 @@ Vector3f radiance(unsigned short *Xi, const SceneParser &scene_parser,
     // }
 
     //
-    return color + material->emission;
+    return color + material->emission + light_color;
 }
 
 #endif  // PT_H

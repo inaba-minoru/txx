@@ -17,6 +17,8 @@ class Triangle;
 class Transform;
 class Mesh;
 // class AABB;
+class BezierCurve;
+class BezierRotator;
 
 #define MAX_PARSER_TOKEN_LENGTH 1024
 
@@ -65,6 +67,8 @@ class SceneParser {
     Triangle *parseTriangle();
     Mesh *parseTriangleMesh();
     Transform *parseTransform();
+    BezierCurve *parseBezierCurve();
+    BezierRotator *parseRevSurface();
 
     int getToken(char token[MAX_PARSER_TOKEN_LENGTH]);
 
