@@ -26,6 +26,9 @@ class Triangle : public Object3D {
         : vertices({a, b, c}), Object3D(m) {
         normal = Vector3f::cross(b - a, c - a).normalized();
     }
+    explicit Triangle(const Vector3f &a, const Vector3f &b, const Vector3f &c,
+                      const Vector3f &n, Material *m)
+        : vertices({a, b, c}), normal(n), Object3D(m) {}
 
     ~Triangle() override = default;
 

@@ -1,7 +1,6 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <aabb.hpp>
 #include <vector>
 
 #include "Vector2f.h"
@@ -9,8 +8,12 @@
 #include "object3d.hpp"
 #include "triangle.hpp"
 
+class KDTree;
+
 class Mesh : public Object3D {
    public:
+    KDTree *kdtree;
+
     Mesh(const char *filename, Material *m);
 
     struct TriangleIndex {
@@ -30,15 +33,15 @@ class Mesh : public Object3D {
     std::vector<Vector3f> n;
     bool intersect(const Ray &r, Hit &h, double tmin) override;
 
-    void getAABB(std::vector<AABB> &vec) {
-        for (int triId = 0; triId < (int)t.size(); ++triId) {
-            TriangleIndex &triIndex = t[triId];
-            Triangle *triangle = new Triangle(v[triIndex[0]], v[triIndex[1]],
-                                              v[triIndex[2]], material);
-            triangle->normal = n[triId];
-            vec.push_back(AABB(triangle));
-        }
-    }
+    // void getAABB(std::vector<AABB> &vec) {
+    //     for (int triId = 0; triId < (int)t.size(); ++triId) {
+    //         TriangleIndex &triIndex = t[triId];
+    //         Triangle *triangle =
+    //             new Triangle(v[triIndex[0]], v[triIndex[1]], v[triIndex[2]],
+    //                          n[triId], material);
+    //         vec.push_back(AABB(triangle));
+    //     }
+    // }
 
    private:
     // Normal can be used for light estimation

@@ -16,13 +16,13 @@ class Plane;
 class Triangle;
 class Transform;
 class Mesh;
-class AABB;
+// class AABB;
 
 #define MAX_PARSER_TOKEN_LENGTH 1024
 
 class SceneParser {
    public:
-    std::vector<AABB> a_aabb;
+    // std::vector<AABB> a_aabb;
 
     SceneParser() = delete;
     SceneParser(const char *filename);

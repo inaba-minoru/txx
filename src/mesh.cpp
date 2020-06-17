@@ -4,10 +4,13 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <kdtree.hpp>
 #include <sstream>
 #include <utility>
 
 bool Mesh::intersect(const Ray &r, Hit &h, double tmin) {
+    return kdtree->intersect(r, h, tmin);
+
     // Optional: Change this brute force method into a faster one.
     bool result = false;
     for (int triId = 0; triId < (int)t.size(); ++triId) {
@@ -80,6 +83,17 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
     computeNormal();
 
     f.close();
+
+    // build kdtree
+    vector<AABB> vec;
+    for (unsigned int triId = 0; triId < t.size(); ++triId) {
+        TriangleIndex &triIndex = t[triId];
+        Triangle *triangle = new Triangle(v[triIndex[0]], v[triIndex[1]],
+                                          v[triIndex[2]], n[triId], material);
+        vec.push_back(AABB(triangle));
+    }
+    kdtree = new KDTree(vec.begin(), vec.size());
+    // end build kdtree
 }
 
 void Mesh::computeNormal() {

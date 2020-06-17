@@ -1,11 +1,11 @@
 
 PerspectiveCamera {
-    center 0 0.15 0.5
+    center 0 0.15 5
     direction 0 0 -1
     up 0 1 0
     angle 30
-    width 200
-    height 200
+    width 1024
+    height 768
 }
 
 Lights {
@@ -25,17 +25,22 @@ Background {
 }
 
 Materials {
-    numMaterials 1
+    numMaterials 2
     PhongMaterial { 
 	  diffuseColor 0.4 0.4 0.4 
 	  specularColor 0.7 0.7 0.7
 	  shininess 20
+      eta 100000
+      alpha_g 0.3
 	}
+    Material {
+        emission 12 12 12
+    }
 	
 }
 
 Group {
-    numObjects 1
+    numObjects 2
     MaterialIndex 0
     Transform {
 		Scale  5 5 5 
@@ -43,6 +48,11 @@ Group {
         TriangleMesh {
             obj_file mesh/bunny_1k.obj
         }
+    }
+    MaterialIndex 1
+    Sphere {
+        center 0 10 10
+        radius 2
     }
 }
 

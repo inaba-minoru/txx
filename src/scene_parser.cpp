@@ -1,6 +1,6 @@
 #include "scene_parser.hpp"
 
-#include <aabb.hpp>
+// #include <aabb.hpp>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -270,6 +270,9 @@ Material *SceneParser::parseMaterial() {
     }
     auto *answer = new Material(diffuseColor, specularColor, shininess, eta,
                                 alpha_g, emission);
+
+    if (filename[0] != 0) answer->loadTexture(filename);
+
     return answer;
 }
 
@@ -362,7 +365,7 @@ Sphere *SceneParser::parseSphere() {
     assert(current_material != nullptr);
     // return new Sphere(center, radius, current_material);
     Sphere *ret = new Sphere(center, radius, current_material);
-    a_aabb.push_back(AABB(ret));
+    // a_aabb.push_back(AABB(ret));
     return ret;
 }
 
@@ -400,7 +403,7 @@ Triangle *SceneParser::parseTriangle() {
     assert(current_material != nullptr);
     // return new Triangle(v0, v1, v2, current_material);
     Triangle *ret = new Triangle(v0, v1, v2, current_material);
-    a_aabb.push_back(AABB(ret));
+    // a_aabb.push_back(AABB(ret));
     return ret;
 }
 
@@ -419,7 +422,7 @@ Mesh *SceneParser::parseTriangleMesh() {
     assert(!strcmp(ext, ".obj"));
     Mesh *answer = new Mesh(filename, current_material);
 
-    answer->getAABB(a_aabb);
+    // answer->getAABB(a_aabb);
 
     return answer;
 }

@@ -6,13 +6,15 @@
 #include <ggx.hpp>
 #include <group.hpp>
 #include <hit.hpp>
-#include <kdtree.hpp>
+// #include <kdtree.hpp>
+#include <vecmath.h>
+
 #include <light.hpp>
 #include <ray.hpp>
 #include <scene_parser.hpp>
 
 Vector3f min(const Vector3f &x, const Vector3f &y) {
-    return Vector3f(min(x.x(), y.x()), min(x.y(), y.y()), min(x.z(), y.z()));
+    return Vector3f(std::min(x.x(), y.x()), std::min(x.y(), y.y()), std::min(x.z(), y.z()));
 }
 
 Vector3f calcDiffuseOutDir(const Vector3f &in_dir, const Vector3f &norm) {
@@ -38,17 +40,20 @@ bool calcRefractOutDir(const Vector3f &in_dir, const Vector3f &norm,
     return 0;
 }
 
+// Vector3f radiance(unsigned short *Xi, const SceneParser &scene_parser,
+//                   const KDTree &kdtree, const Ray &ray, const double &tmin,
+//                   const int &depth, double n) {
 Vector3f radiance(unsigned short *Xi, const SceneParser &scene_parser,
-                  const KDTree &kdtree, const Ray &ray, const double &tmin,
-                  const int &depth, double n) {
+                  const Ray &ray, const double &tmin, const int &depth,
+                  double n) {
     // if (erand48(Xi) < 0.01) return 0;
     if (depth > 8) return Vector3f::ZERO;
 
     // 没有来源
     Hit hit;
-    if (!kdtree.intersect(ray, hit, tmin)) return Vector3f::ZERO;
-    // if (!scene_parser.getGroup()->intersect(ray, hit, tmin))
-    // return Vector3f::ZERO;
+    // if (!kdtree.intersect(ray, hit, tmin)) return Vector3f::ZERO;
+    if (!scene_parser.getGroup()->intersect(ray, hit, tmin))
+        return Vector3f::ZERO;
     //
 
     Vector3f hit_point = ray.pointAtParameter(hit.getT());
@@ -92,7 +97,7 @@ Vector3f radiance(unsigned short *Xi, const SceneParser &scene_parser,
     double weight, new_eta;
     sample(Xi, -ray.getDirection(), hit.getNormal(), o, weight, new_eta,
            n > 1 ? 1 : material->eta, n, material->alpha_g, material->alpha_g2);
-    Vector3f color = radiance(Xi, scene_parser, kdtree, Ray(hit_point, o), tmin,
+    Vector3f color = radiance(Xi, scene_parser, Ray(hit_point, o), tmin,
                               depth + 1, new_eta) *
                      //  material->diffuseColor *
                      //   fs(o, -ray.getDirection(), hit.getNormal(),

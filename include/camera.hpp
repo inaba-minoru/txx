@@ -16,7 +16,8 @@ class Camera {
         this->direction = direction.normalized();
         // this->horizontal = Vector3f::cross(this->direction, up).normalized();
         this->horizontal = Vector3f::cross(this->direction, up).normalized();
-        this->up = Vector3f::cross(this->horizontal, this->direction).normalized();
+        this->up =
+            Vector3f::cross(this->horizontal, this->direction).normalized();
         this->width = imgW;
         this->height = imgH;
     }
@@ -57,7 +58,8 @@ class PerspectiveCamera : public Camera {
         Vector3f dc = Matrix3f(horizontal, up, direction) *
                       Vector3f(point.x() - width / 2, point.y() - height / 2, f)
                           .normalized();
-        return Ray(center + dc * 140, dc);
+        // return Ray(center + dc * 140, dc);
+        return Ray(center, dc);
     }
 };
 

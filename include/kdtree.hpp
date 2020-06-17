@@ -70,6 +70,7 @@ class KDTree {
     }
     void destroy(Node *u) {
         if (!u->ls) {
+            delete u->box.obj;
             delete u;
             return;
         }

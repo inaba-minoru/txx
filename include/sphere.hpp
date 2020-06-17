@@ -12,7 +12,7 @@
 class Sphere : public Object3D {
    public:
     Vector3f centre;  // 球心
-    double radius;     // 半径
+    double radius;    // 半径
 
     Sphere() = delete;
     explicit Sphere(const Vector3f &c, const double &r)
