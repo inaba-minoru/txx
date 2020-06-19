@@ -1,0 +1,110 @@
+RealisticCamera {
+    center 0 0 5
+    direction 0 0 -1
+    up 0 1 0
+    d 0.01
+    zi 0.01
+    zo 7
+    angle 80
+    width 500
+    height 300
+}
+
+Materials {
+    numMaterials 5
+    Material {
+        diffuseColor 0.9 0.8 0.7
+    }
+    Material {
+        emission 6 6 6
+    }
+    Material {
+        diffuseColor 1 1 1
+        specular
+        
+    }
+    Material {
+        diffuseColor 0.8 1 0.8
+        dielectric
+    }
+    Material {
+	    texture tex/vase.bmp
+    }
+}
+
+Group {
+    numObjects 10
+
+    MaterialIndex 0
+    Plane {
+        normal 0 -1 0
+        offset -4
+    }
+    Plane {
+        normal 0 1 0
+        offset -4
+    }
+    Plane {
+        normal 0 0 1
+        offset -5
+    }
+
+    MaterialIndex 2
+    Transform {
+        Scale 10 10 10
+        Translate 0.4 -0.45 -0.4
+        TriangleMesh {
+            obj_file mesh/bunny_1k.obj
+        }
+    }
+
+    MaterialIndex 3
+    Transform {
+        Scale 3 3 3
+        Translate -0.7 -.5 -0.7
+        YRotate 45
+        TriangleMesh {
+            obj_file mesh/dragon.obj
+        }
+    }
+
+    MaterialIndex 4
+    Transform {
+        Scale 0.5 0.5 0.5
+	    Translate  14 -8 -4
+        RevSurface {
+            profile BezierCurve {
+                controls
+                    [ 1.25 0 0 ]
+                    [ 1.75 1.5 0 ]
+                    [ 2 2 0 ]
+                    [ 1.75 2.5 0 ]
+                    [ 1.25 3 0 ]
+                    [ 0.8 5 0 ]
+                    [ 1 7 0 ]
+            }
+        }
+	}
+
+    MaterialIndex 1
+    Triangle {
+        vertex0 -1 3.7 0
+        vertex1 -1 3.7 -2
+        vertex2 1 3.7 -2
+    }
+    Triangle {
+        vertex0 -1 3.7 0
+        vertex1 1 3.7 0
+        vertex2 1 3.7 -2
+    }
+    Triangle {
+        vertex0 -1 3.7 0
+        vertex1 -1 3.9 0
+        vertex2 -1 3.9 -2
+    }
+    Triangle {
+        vertex0 -1 3.7 0
+        vertex1 -1 3.7 -2
+        vertex2 -1 3.9 -2
+    }
+}

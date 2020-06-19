@@ -13,15 +13,17 @@ bool Mesh::intersect(const Ray &r, Hit &h, double tmin) {
     return kdtree->intersect(r, h, tmin);
 
     // Optional: Change this brute force method into a faster one.
-    // bool result = false;
-    // for (int triId = 0; triId < (int)t.size(); ++triId) {
-    //     TriangleIndex &triIndex = t[triId];
-    //     Triangle triangle(v[triIndex[0]], v[triIndex[1]], v[triIndex[2]],
-    //                       material);
-    //     triangle.normal = n[triId];
-    //     result |= triangle.intersect(r, h, tmin);
-    // }
-    // return result;
+    bool result = false;
+    for (int triId = 0; triId < (int)t.size(); ++triId) {
+        // TriangleIndex &triIndex = t[triId];
+        // Triangle triangle(v[triIndex[0]], v[triIndex[1]], v[triIndex[2]],
+        //   material);
+        // triangle.normal = n[triId];
+        // result |= triangle.intersect(r, h, tmin);
+
+        result |= triangles[triId]->intersect(r, h, tmin);
+    }
+    return result;
 }
 
 Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
@@ -69,6 +71,9 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
                     trig.texID[ii]--;
                 }
                 t.push_back(trig);
+                double t1, t2;
+                if (facess >> trig[1] >> trig.texID[1]) t.push_back(trig);
+
             } else {
                 TriangleIndex trig;
                 for (int ii = 0; ii < 3; ii++) {
@@ -76,6 +81,7 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
                     trig[ii]--;
                 }
                 t.push_back(trig);
+                if (ss >> trig[1]) t.push_back(trig);
             }
         } else if (tok == texTok) {
             Vector2f texcoord;
@@ -100,6 +106,10 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
                                    texCoord[triIndex.texID[1]],
                                    texCoord[triIndex.texID[2]]);
         vec.push_back(AABB(triangle));
+
+        triangles.push_back(triangle);
+        area += triangle->area;
+        area_presum.push_back(area);
     }
     kdtree = new KDTree(vec.begin(), vec.size());
     // end build kdtree

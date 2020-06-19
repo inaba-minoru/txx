@@ -47,6 +47,30 @@ class Mesh : public Object3D {
     //     }
     // }
 
+    std::vector<Triangle *> triangles;
+    std::vector<double> area_presum;
+    void sampleLight(unsigned short *Xi, Vector3f &p, Vector3f &light) {
+        double temp = erand48(Xi) * area;
+        int l = -1, r = area_presum.size() - 1;
+        while (l + 1 < r) {
+            int m = (l + r) / 2;
+            if (area_presum[m] < temp)
+                l = m;
+            else
+                r = m;
+        }
+        triangles[r]->sampleLight(Xi, p, light);
+    }
+
+    void transform(const Matrix4f &mat) {
+        area = 0;
+        for (int i = 0; i < triangles.size(); i++) {
+            triangles[i]->transform(mat);
+            area += triangles[i]->area;
+            area_presum[i] = area;
+        }
+    }
+
    private:
     // Normal can be used for light estimation
     void computeNormal();

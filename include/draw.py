@@ -36,8 +36,9 @@ from mpl_toolkits.mplot3d import Axes3D
 # g = np.sqrt(eta ** 2 - 1 + c ** 2)
 
 x = np.arange(0, 1, 0.01)
-y = np.sqrt(x) - 1
+# y = np.arctan(0.01 * np.sqrt(x) / np.sqrt(1 - x))
+y = np.arcsin(x)
 plt.title("sine wave form")
 # 使用 matplotlib 来绘制点
-plt.plot(x, y)
+plt.plot(y, x)
 plt.show()

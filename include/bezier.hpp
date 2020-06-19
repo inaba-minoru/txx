@@ -156,23 +156,26 @@ class BezierRotator : public Object3D {
     virtual std::pair<double, Vector3f> intersect(Ray ray) {
         double final_dis = INF;
         // check for |dy|<eps
-        if (std::abs(ray.getDirection().y()) < 5e-4) {
+        if (std::abs(ray.getDirection().y()) < 5e-4) {  // y 轴偏移很小
             double dis_to_axis =
                 (Vector3f(pos.x(), ray.getOrigin().y(), pos.z()) -
                  ray.getOrigin())
-                    .length();
-            double hit = ray.pointAtParameter(dis_to_axis).y();
+                    .length();  // 源点到 y 轴的距离
+            double hit = ray.pointAtParameter(dis_to_axis).y();  // 挪 一段距离
+
             if (hit < pos.y() + eps || hit > pos.y() + curve.height - eps)
                 return std::make_pair(INF, Vector3f());
+
             // solve function pos.y+y(t)=ray.o.y to get x(t)
-            double t = solve_t(hit - pos.y());
+            double t = solve_t(hit - pos.y());  // 得到 y 对应参数
             if (t < 0 || t > 1) return std::make_pair(INF, Vector3f());
             Vector3f loc = curve.getpos(t);
             double ft = pos.y() + loc.y() - hit;
             if (std::abs(ft) > eps) return std::make_pair(INF, Vector3f());
             // assume sphere (pos.x, pos.y + loc.y, pos.z) - loc.x
             final_dis = get_sphere_intersect(
-                ray, Vector3f(pos.x(), pos.y() + loc.y(), pos.z()), loc.x());
+                ray, Vector3f(pos.x(), pos.y() + loc.y(), pos.z()),
+                loc.x());  // 圆求交
             if (final_dis < 0) return std::make_pair(INF, Vector3f());
             Vector3f inter_p = ray.pointAtParameter(final_dis);
             // printf("y %f small!!!",std::abs((inter_p - Vector3f(pos.x,
@@ -182,6 +185,7 @@ class BezierRotator : public Object3D {
                          sqr(loc.x())) > 1e-1)
                 return std::make_pair(INF, Vector3f());
             // second iteration, more accuracy
+            // 再搞一次一样的
             hit = inter_p.y();
             if (hit < pos.y() + eps || hit > pos.y() + curve.height - eps)
                 return std::make_pair(INF, Vector3f());
@@ -190,7 +194,8 @@ class BezierRotator : public Object3D {
             ft = pos.y() + loc.y() - hit;
             if (std::abs(ft) > eps) return std::make_pair(INF, Vector3f());
             final_dis = get_sphere_intersect(
-                ray, Vector3f(pos.x(), pos.y() + loc.y(), pos.z()), loc.x());
+                ray, Vector3f(pos.x(), pos.y() + loc.y(), pos.z()),
+                loc.x());  // 求圆交点
             if (final_dis < 0) return std::make_pair(INF, Vector3f());
             inter_p = ray.pointAtParameter(final_dis);
             if (std::abs((inter_p - Vector3f(pos.x(), hit, pos.z()))
@@ -209,7 +214,7 @@ class BezierRotator : public Object3D {
         // normal case
         // calc ay^2+by+c
         double a = 0, b = 0, c = 0, t1, t2;
-        // (xo-x'+xd/yd*(y-yo))^2 -> (t1+t2*y)^2
+        // (xo-x'+xd/yd*(y-yo))^2 -> (t1+t2*y)^2 = x^2
         t1 = ray.getOrigin().x() - pos.x() -
              ray.getDirection().x() / ray.getDirection().y() *
                  ray.getOrigin().y();
@@ -217,7 +222,7 @@ class BezierRotator : public Object3D {
         a += t2 * t2;
         b += 2 * t1 * t2;
         c += t1 * t1;
-        // (zo-z'+zd/yd*(y-yo))^2 -> (t1+t2*y)^2
+        // (zo-z'+zd/yd*(y-yo))^2 -> (t1+t2*y)^2 = z^2
         t1 = ray.getOrigin().z() - pos.z() -
              ray.getDirection().z() / ray.getDirection().y() *
                  ray.getOrigin().y();
@@ -225,14 +230,14 @@ class BezierRotator : public Object3D {
         a += sqr(t2);
         b += 2 * t1 * t2;
         c += sqr(t1);
-        // ay^2+by+c -> a'(y-b')^2+c'
+        // ay^2+by+c -> a'(y-b')^2+c' = x^2+z^2
         c = c - b * b / 4 / a;
         b = -b / 2 / a - pos.y();
         // printf("%lf %lf %lf\n",a,b,c);
         if (0 <= b && b <= curve.height && c > curve.max2 ||
             (b < 0 || b > curve.height) &&
                 std::min(sqr(b), sqr(curve.height - b)) * a + c >
-                    curve.max2)  // no intersect
+                    curve.max2)  // no intersect 无解
             return std::make_pair(INF, Vector3f());
         // double M_PIck[20] = {0, 0, 1}; int tot = 2;
         // for (double _ = 0; _ <= 1; _ += 0.1)

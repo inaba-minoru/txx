@@ -25,7 +25,7 @@ Background {
 }
 
 Materials {
-  numMaterials 3
+  numMaterials 5
   PhongMaterial { 
 	  diffuseColor 0.1 0.1 0.1 
 	  specularColor 0.3 0.3 0.3
@@ -43,10 +43,16 @@ Materials {
 	  specularColor 0.3 0.3 0.3
 	  shininess 25
 	}
+    Material {
+        emission 9 7 5 
+    }
+    Material {
+        emission 3 3 3 
+    }
 }
 
 Group {
-    numObjects 3
+    numObjects 5
     MaterialIndex 0
     Transform {
 		YRotate 70
@@ -70,6 +76,17 @@ Group {
     Plane {
   	normal 0 1 0
         offset -2 
+    }
+    MaterialIndex 3
+    Sphere {
+        center 0.5 2 1
+
+radius 0.5
+    }
+    MaterialIndex 4
+    Sphere {
+        center 5 20 -1
+radius 0.5
     }
 }
 

@@ -16,14 +16,18 @@ class Sphere : public Object3D {
 
     Sphere() = delete;
     explicit Sphere(const Vector3f &c, const double &r)
-        : centre(c), radius(r), Object3D() {}
+        : centre(c), radius(r), Object3D() {
+        area = 4 * M_PI * radius * radius;
+    }
     explicit Sphere(const Vector3f &c, const double &r, Material *m)
-        : centre(c), radius(r), Object3D(m) {}
+        : centre(c), radius(r), Object3D(m) {
+        area = 4 * M_PI * radius * radius;
+    }
 
     ~Sphere() override = default;
 
     bool intersect(const Ray &r, Hit &h, double tmin) override {
-        Vector3f op = centre - r.getOrigin();
+        // Vector3f op = centre - r.getOrigin();
         //   Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
         // double t, eps = 1e-4, b = Vector3f::dot(op, r.getDirection()),
         //           det = b * b - op.squaredLength() + radius * radius;
@@ -86,6 +90,15 @@ class Sphere : public Object3D {
         }
 
         return false;
+    }
+
+    void sampleLight(unsigned short *Xi, Vector3f &p, Vector3f &light) {
+        double theta = erand48(Xi) * M_PI;
+        double phi = erand48(Xi) * 2 * M_PI;
+        double temp = sin(theta);
+        Vector3f n = Vector3f(cos(phi) * temp, sin(phi) * temp, cos(theta));
+        p = centre + radius * n;
+        light = material->emission;
     }
 };
 

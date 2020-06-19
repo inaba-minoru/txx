@@ -1,7 +1,10 @@
-PerspectiveCamera {
+RealisticCamera {
     center 0 -0.2 5
     direction 0 0 -1
     up 0 1 0
+    d 0.01
+    zi 0.07
+    zo 10
     angle 60
     width 300
     height 300
@@ -24,6 +27,8 @@ Materials {
 		specularColor 0.99 0.99 0.99
 		shininess 50
 
+        dielectric
+
         eta 1.3
         alpha_g 0.0001
     }
@@ -32,6 +37,8 @@ Materials {
         diffuseColor 1 1 1
 		specularColor 1 1 1
 		shininess 50
+
+        specular
 
         eta 10000
         alpha_g 0.0001
@@ -156,8 +163,11 @@ Group {
     }
 
     MaterialIndex 7
-    Sphere {
-        center 0 20 -5
-        radius 16.2
+    Transform {
+        Scale 1 0.1 1
+        Translate 0 38 -10
+    TriangleMesh {
+        obj_file mesh/cube.obj
+    }
     }
 }

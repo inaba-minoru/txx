@@ -54,6 +54,7 @@ class SceneParser {
    private:
     void parseFile();
     void parsePerspectiveCamera();
+    void parseRealisticCamera();
     void parseBackground();
     void parseLights();
     Light *parsePointLight();

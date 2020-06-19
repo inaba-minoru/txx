@@ -55,11 +55,15 @@ int main(int argc, char* argv[]) {
 
     Image image(camera->getWidth(), camera->getHeight());
 
-    double dir[8][2] = {{-0.5, -0.5}, {-0.5, 0.5}, {0.5, -0.5}, {0.5, 0.5},
-                        {-0.5, 0},    {0, -0.5},   {0.5, 0},    {0, 0.5}};
+    sceneParser.getGroup()->init();
 
-    int N = 9;
-    int samps = 100 / N;
+    int N = 10;
+    int N2 = N * N;
+    int samps_per_grid = 1;
+    int samps = N2 * samps_per_grid;
+
+    // int N = 9;
+    // int samps = 100 / N;
 
 #pragma omp parallel
     {
@@ -67,8 +71,8 @@ int main(int argc, char* argv[]) {
 
 #pragma omp for schedule(dynamic, 1)
         for (int pixel = 0; pixel < camera->getWidth() * camera->getHeight();
-             ++pixel) {
-            fprintf(stderr, "\rRendering (%d spp) %5.2f%%", samps * N,
+             pixel++) {
+            fprintf(stderr, "\rRendering (%d spp) %5.2f%%", samps,
                     100. * pixel / (camera->getHeight() * camera->getWidth()));
 
             int x = pixel / camera->getHeight();
@@ -76,28 +80,49 @@ int main(int argc, char* argv[]) {
 
             Xi[2] = pixel * pixel * pixel;
 
-            bool rooks[9]{};
-            Vector3f sum(0);
-            for (int i = 0, j, idx; i < N; i++) {
-                //
-                idx = erand48(Xi) * (N - i) + 1;
-                for (j = 0; j < N; j++) {
-                    idx -= !rooks[j];
-                    if (!idx) break;
+            Vector3f sum;
+
+            for (size_t xx = 0; xx < N; xx++) {
+                for (size_t yy = 0; yy < N; yy++) {
+                    double sx = x + (xx + erand48(Xi)) / N;
+                    double sy = y + (yy + erand48(Xi)) / N;
+                    // Vector3f temp;
+                    Ray cam_ray = camera->generateRay(Xi, Vector2f(sx, sy));
+                    for (size_t i = 0; i < samps_per_grid; i++) {
+                        sum +=
+                            radiance(Xi, sceneParser, cam_ray, 1e-4, 0, 1, 1) /
+                            samps_per_grid / N2;
+                    }
+                    // sum += temp / N2;
                 }
-                rooks[j] = 1;
-                //
-                assert(j < N);
-                Ray camRay = camera->generateRay(
-                    Vector2f(x - (N / 2 + i) / N, y - (N / 2 + j) / N));
-                Vector3f temp(0);
-                for (int k = 0; k < samps; ++k)
-                    temp +=
-                        radiance(Xi, sceneParser, camRay, 1e-4, 0, 1) / samps;
-                sum += clamp(temp) / N;
             }
 #pragma omp critical
             image.SetPixel(x, y, gamma(sum));
+
+            //             bool rooks[9]{};
+            //             Vector3f sum(0);
+            //             for (int i = 0, j, idx; i < N; i++) {
+            //                 //
+            //                 idx = erand48(Xi) * (N - i) + 1;
+            //                 for (j = 0; j < N; j++) {
+            //                     idx -= !rooks[j];
+            //                     if (!idx) break;
+            //                 }
+            //                 rooks[j] = 1;
+            //                 //
+            //                 assert(j < N);
+            //                 Ray camRay = camera->generateRay(
+            //                     Vector2f(x - (N / 2. + i) / N, y - (N / 2. +
+            //                     j) / N));
+            //                 Vector3f temp(0);
+            //                 for (int k = 0; k < samps; ++k)
+            //                     temp +=
+            //                         radiance(Xi, sceneParser, camRay, 1e-4,
+            //                         0, 1) / samps;
+            //                 sum += clamp(temp) / N;
+            //             }
+            // #pragma omp critical
+            //             image.SetPixel(x, y, gamma(sum));
 
             // Vector3f color_sum = Vector3f::ZERO;
 
@@ -148,6 +173,7 @@ int main(int argc, char* argv[]) {
     //         }
     //     }
 
+    // image.Gauss();
     image.SaveBMP(outputFile.c_str());
 
     std::cout << "Hello! Computer Graphics!" << std::endl;

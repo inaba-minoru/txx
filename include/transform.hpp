@@ -23,6 +23,9 @@ class Transform : public Object3D {
 
     Transform(const Matrix4f &m, Object3D *obj) : o(obj) {
         transform = m.inverse();
+        transform_inv = m;
+        material = obj->material;
+        area = obj->area;
     }
 
     ~Transform() {}
@@ -41,9 +44,15 @@ class Transform : public Object3D {
         return inter;
     }
 
+    void sampleLight(unsigned short *Xi, Vector3f &p, Vector3f &light) {
+        o->sampleLight(Xi, p, light);
+        p = transformPoint(transform_inv, p);
+    }
+
    protected:
     Object3D *o;  // un-transformed object
     Matrix4f transform;
+    Matrix4f transform_inv;
 };
 
 #endif  // TRANSFORM_H

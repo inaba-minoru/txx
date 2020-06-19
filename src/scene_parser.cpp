@@ -82,6 +82,8 @@ void SceneParser::parseFile() {
     while (getToken(token)) {
         if (!strcmp(token, "PerspectiveCamera")) {
             parsePerspectiveCamera();
+        } else if (!strcmp(token, "RealisticCamera")) {
+            parseRealisticCamera();
         } else if (!strcmp(token, "Background")) {
             parseBackground();
         } else if (!strcmp(token, "Lights")) {
@@ -128,6 +130,44 @@ void SceneParser::parsePerspectiveCamera() {
     assert(!strcmp(token, "}"));
     camera = new PerspectiveCamera(center, direction, up, width, height,
                                    angle_radians);
+}
+
+void SceneParser::parseRealisticCamera() {
+    char token[MAX_PARSER_TOKEN_LENGTH];
+    // read in the camera parameters
+    getToken(token);
+    assert(!strcmp(token, "{"));
+    getToken(token);
+    assert(!strcmp(token, "center"));
+    Vector3f center = readVector3f();
+    getToken(token);
+    assert(!strcmp(token, "direction"));
+    Vector3f direction = readVector3f();
+    getToken(token);
+    assert(!strcmp(token, "up"));
+    Vector3f up = readVector3f();
+    getToken(token);
+    assert(!strcmp(token, "d"));
+    double d = readFloat();
+    getToken(token);
+    assert(!strcmp(token, "zi"));
+    double zi = readFloat();
+    getToken(token);
+    assert(!strcmp(token, "zo"));
+    double zo = readFloat();
+    getToken(token);
+    assert(!strcmp(token, "angle"));
+    double angle = readFloat();
+    getToken(token);
+    assert(!strcmp(token, "width"));
+    int width = readInt();
+    getToken(token);
+    assert(!strcmp(token, "height"));
+    int height = readInt();
+    getToken(token);
+    assert(!strcmp(token, "}"));
+    camera = new RealisticCamera(center, direction, up, width, height, d, zi,
+                                 zo, angle / 180 * M_PI);
 }
 
 void SceneParser::parseBackground() {
@@ -245,6 +285,8 @@ Material *SceneParser::parseMaterial() {
     double eta = 100, alpha_g = 1;
     Vector3f emission(0, 0, 0);
 
+    int type = 0;
+
     getToken(token);
     assert(!strcmp(token, "{"));
     while (true) {
@@ -261,6 +303,14 @@ Material *SceneParser::parseMaterial() {
             alpha_g = readFloat();
         } else if (strcmp(token, "emission") == 0) {  // 发光
             emission = readVector3f();
+        } else if (strcmp(token, "diffuse") == 0) {  // 漫反射
+            type = 0;
+        } else if (strcmp(token, "specular") == 0) {  // 镜面反射
+            type = 1;
+        } else if (strcmp(token, "dielectric") == 0) {  // 电介质
+            type = 2;
+        } else if (strcmp(token, "ggx") == 0) {  // 微表面
+            type = 3;
         } else if (strcmp(token, "texture") == 0) {
             // Optional: read in texture and draw it.
             getToken(filename);
@@ -269,8 +319,26 @@ Material *SceneParser::parseMaterial() {
             break;
         }
     }
-    auto *answer = new Material(diffuseColor, specularColor, shininess, eta,
-                                alpha_g, emission);
+    // auto *answer = new Material(diffuseColor, specularColor, shininess, eta,
+    //                             alpha_g, emission);
+
+    Material *answer;
+    switch (type) {
+        case 0:
+            answer = new DiffuseMaterial(diffuseColor, emission);
+            break;
+        case 1:
+            answer = new SpecularMaterial(diffuseColor, emission);
+            break;
+        case 2:
+            answer = new DielectricMaterial(diffuseColor, emission, eta);
+            break;
+        case 3:
+            answer = new GGXMaterial(diffuseColor, emission, eta, alpha_g);
+            break;
+        default:
+            break;
+    }
 
     if (filename[0] != 0) answer->loadTexture(filename);
 
@@ -536,6 +604,8 @@ Transform *SceneParser::parseTransform() {
     assert(object != nullptr);
     getToken(token);
     assert(!strcmp(token, "}"));
+
+    object->transform(matrix);
     return new Transform(matrix, object);
 }
 

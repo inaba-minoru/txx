@@ -46,22 +46,26 @@ Materials {
         emission 0 0 0
     }
     Material {
+        specular
+
         diffuseColor 0.999 0.999 0.999
         eta 100
         alpha_g 0.0001
         emission 0 0 0
     }
     Material {
+        dielectric
+
         diffuseColor 0.999 0.999 0.999
         eta 1.5
-        alpha_g 0.0001
+        alpha_g 0.05
         emission 0 0 0
     }
     Material {
         diffuseColor 0 0 0
         eta 10
         alpha_g 0.99
-        emission 12 12 12
+        emission 6 6 6
     }
 }
 
