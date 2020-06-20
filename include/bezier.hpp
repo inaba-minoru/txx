@@ -145,8 +145,15 @@ class BezierRotator : public Object3D {
 
             if (material->texture.valid()) {
                 Vector3f texCoord = change_for_bezier(temp.second);
-                hit.setTexCoord(
-                    Vector2f(texCoord.x() / 2 / M_PI, texCoord.y()));
+                texCoord.x() /= 2 * M_PI;
+                // texCoord.x() = texCoord.x() < 0.01
+                //                    ? 0.01
+                //                    : texCoord.x() > 0.99 ? 0.99 : texCoord.x();
+                // texCoord.y() = texCoord.y() < 0.01
+                //                    ? 0.01
+                //                    : texCoord.y() > 0.99 ? 0.99 : texCoord.y();
+
+                hit.setTexCoord(Vector2f(texCoord.x(), texCoord.y()));
             }
 
             return 1;
@@ -332,7 +339,24 @@ class BezierRotator : public Object3D {
             ft = x - sq;
             dft = dx - a * (y - b) * dy / sq;
             if (std::abs(ft) < eps) return t;
-            t -= ft / dft;
+
+            double s = ft / dft;
+            double lambda = 1;
+
+            t -= s;
+            // while (1) {
+            //     loc = curve.getpos(t - lambda * s);
+            //     x = loc.x();
+            //     y = loc.y();
+            //     sq = sqrt(a * sqr(y - b) + c);
+            //     if (fabs(x - sq) >= fabs(ft)) {
+            //         lambda -= 0.01;
+            //         if (lambda < eps) break;
+            //     } else {
+            //         t -= lambda * s;
+            //         break;
+            //     }
+            // }
         }
         return -1;
     }

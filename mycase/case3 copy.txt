@@ -1,0 +1,67 @@
+PerspectiveCamera {
+    center 0 0 0
+    direction 0 0 -1
+    up 0 1 0
+    angle 50
+    width 1024
+    height 768
+}
+
+Materials {
+    numMaterials 4
+
+    Material {
+        diffuseColor 1 0 0
+        texture tex/background.bmp
+    }
+    Material {
+        diffuseColor 0 1 0
+        texture tex/left.bmp
+    }
+    Material {
+        diffuseColor 0 0 1
+        texture tex/bottom.bmp
+    }
+    Material {
+        diffuseColor 0.4 0.4 0
+    }
+}
+
+Group {
+    numObjects 4
+
+    MaterialIndex 0
+    Transform {
+        Scale 100 100 50
+        Translate 0.25 0.3 -4
+        TriangleMesh {
+            obj_file mesh/wall.obj
+        }
+    }
+    MaterialIndex 1
+    Transform {
+        Scale 50 100 50
+        Translate -1.4 0.6 -3
+        YRotate 90
+        TriangleMesh {
+            obj_file mesh/wall.obj
+        }
+    }
+    MaterialIndex 2
+    Transform {
+        Scale 120 50 50
+        Translate 0.18 -0.8 -3
+        XRotate 90
+        TriangleMesh {
+            obj_file mesh/wall.obj
+        }
+    }
+    MaterialIndex 3
+    Transform {
+        Scale 10 10 10
+        Translate 0 0 -10
+        TriangleMesh {
+            obj_file mesh/bunny_1k.obj
+        }
+    }
+}

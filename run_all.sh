@@ -19,7 +19,11 @@ mkdir -p output
 # time bin/PA1 testcases/scene09_s.txt output/scene09_s.bmp
 
 
-time bin/PA1 testcases/scene.txt output/scene.bmp
+# time bin/PA1 mycase/case1.txt output/scene.bmp
+# time bin/PA1 mycase/case2.txt output/scene.bmp
+time bin/PA1 mycase/case3.txt output/scene.bmp
+
+# time bin/PA1 testcases/scene.txt output/scene.bmp
 # time bin/PA1 testcases/scene0X.txt output/scene0X.bmp
 # time bin/PA1 testcases/scene00.txt output/scene00.bmp
 # time bin/PA1 testcases/scene10_wineglass.txt output/scene10_wineglass.bmp

@@ -1,0 +1,102 @@
+PerspectiveCamera {
+    center 50 48 130
+    direction 0. -0.042612 -1
+    up 0 1 0
+    angle 60
+    width 1024
+    height 768
+}
+
+Materials {
+    numMaterials 7
+
+    Material {
+        diffuseColor 1 0.2 0.2
+    }
+
+    Material {
+        diffuseColor 0.2 0.2 1
+    }
+
+    Material {
+        diffuseColor 0.8 0.8 0.8
+    }
+
+    Material {
+        diffuseColor 0 0 0
+    }
+
+    Material {
+        specular
+        diffuseColor 1 1 1
+    }
+
+    Material {
+        dielectric
+        eta 1.6
+        diffuseColor 1 1 1
+    }
+
+    Material {
+        emission 12 12 12
+    }
+}
+
+Group {
+    numObjects 9
+
+    MaterialIndex 0
+    Plane {
+        normal 1 0 0
+        offset 0
+    }
+
+    MaterialIndex 1
+    Plane {
+        normal -1 0 0
+        offset -99
+    }
+
+    MaterialIndex 2
+    Plane {
+        normal 0 0 1
+        offset 0
+    }
+
+    Plane {
+        normal 0 1 0
+        offset 0
+    }
+
+    Plane {
+        normal 0 -1 0
+        offset -81.6
+    }
+
+    MaterialIndex 3
+    Plane {
+        normal 0 0 -1
+        offset -270
+    }
+
+    MaterialIndex 4
+    Sphere {
+        center 27 16.5 23
+        radius 16.5
+    }
+
+    MaterialIndex 5
+    Sphere {
+        center 73 16.5 39
+        radius 16.5
+    }
+
+    MaterialIndex 6
+    Transform {
+        Scale 10 0.1 10
+        Translate 5 810 3.7
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+}

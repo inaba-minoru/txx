@@ -1,3 +1,6 @@
+#include <sys/time.h>
+#include <time.h>
+
 #include <cassert>
 #include <cmath>
 #include <cstdio>
@@ -57,7 +60,7 @@ int main(int argc, char* argv[]) {
 
     sceneParser.getGroup()->init();
 
-    int N = 10;
+    int N = 1;
     int N2 = N * N;
     int samps_per_grid = 1;
     int samps = N2 * samps_per_grid;
@@ -65,15 +68,32 @@ int main(int argc, char* argv[]) {
     // int N = 9;
     // int samps = 100 / N;
 
+    timeval start_time;
+    gettimeofday(&start_time, nullptr);
+    double stv = start_time.tv_sec + start_time.tv_usec / 1e6;
+
 #pragma omp parallel
     {
         unsigned short Xi[3];
 
+        double percent;
+
+        timeval current_time;
+        double ctv;
+
 #pragma omp for schedule(dynamic, 1)
         for (int pixel = 0; pixel < camera->getWidth() * camera->getHeight();
              pixel++) {
-            fprintf(stderr, "\rRendering (%d spp) %5.2f%%", samps,
-                    100. * pixel / (camera->getHeight() * camera->getWidth()));
+            percent = 100. * pixel / (camera->getHeight() * camera->getWidth());
+
+            gettimeofday(&current_time, nullptr);
+            ctv = current_time.tv_sec + current_time.tv_usec / 1e6;
+
+            fprintf(stderr,
+                    "\rRendering (%d spp) %5.2f%% / elapsed %5.2f s / evaluate "
+                    "%5.2f s",
+                    samps, percent, ctv - stv,
+                    (ctv - stv) / percent * (100 - percent));
 
             int x = pixel / camera->getHeight();
             int y = pixel % camera->getHeight();

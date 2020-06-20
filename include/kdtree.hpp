@@ -23,6 +23,7 @@ class KDTree {
    public:
     KDTree(std::vector<AABB>::iterator a, const int &n) {
         if (n) root = build(a, n);
+        root->box.pmax.print();
     }
     ~KDTree() {
         if (root) destroy(root);

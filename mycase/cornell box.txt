@@ -1,0 +1,66 @@
+PerspectiveCamera {
+    center 50 48 130
+    direction 0. -0.042612 -1
+    up 0 1 0
+    angle 60
+    width 1024
+    height 768
+}
+
+Materials {
+    numMaterials 4
+
+    Material {
+        diffuseColor 1 0.2 0.2
+    }
+
+    Material {
+        diffuseColor 0.2 0.2 1
+    }
+
+    Material {
+        diffuseColor 0.8 0.8 0.8
+    }
+
+    Material {
+        diffuseColor 0 0 0
+    }
+}
+
+Group {
+    numObjects 6
+
+    MaterialIndex 0
+    Plane {
+        normal 1 0 0
+        offset 0
+    }
+
+    MaterialIndex 1
+    Plane {
+        normal -1 0 0
+        offset -99
+    }
+
+    MaterialIndex 2
+    Plane {
+        normal 0 0 1
+        offset 0
+    }
+
+    Plane {
+        normal 0 1 0
+        offset 0
+    }
+
+    Plane {
+        normal 0 -1 0
+        offset -81.6
+    }
+
+    MaterialIndex 3
+    Plane {
+        normal 0 0 -1
+        offset -270
+    }
+}

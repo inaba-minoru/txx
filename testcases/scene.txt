@@ -21,18 +21,13 @@ Materials {
     Material {
         diffuseColor 1 1 1
         specular
-        ggx
-        eta 100
-        alpha_g 0.9
+        
     }
     Material {
         diffuseColor 0.8 1 0.8
-        eta 2.417
         dielectric
     }
     Material {
-        eta 100
-        alpha_g 0.9
 	    texture tex/vase.bmp
     }
 }
@@ -65,10 +60,11 @@ Group {
 
     MaterialIndex 3
     Transform {
-        Scale 1 1 1
-        Translate -2 -2 -1
+        Scale 3 3 3
+        Translate -0.7 -.5 -0.7
+        YRotate 45
         TriangleMesh {
-            obj_file mesh/DIAMOND.obj
+            obj_file mesh/dragon.obj
         }
     }
 
@@ -91,7 +87,11 @@ Group {
 	}
 
     MaterialIndex 1
+    Transform {
+        Scale 1 0.1 1
+        Translate 0 38 -1
         TriangleMesh {
             obj_file mesh/cube.obj
         }
+    }
 }

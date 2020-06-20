@@ -86,6 +86,13 @@ class Sphere : public Object3D {
             if (Vector3f::dot(n, -r.getDirection()) < 0) n = -n;
 
             h.set(tt, material, n);
+
+            if (material->texture.valid())
+                h.setTexCoord(Vector2f(
+                    atan2(n.z(), n.x()) / (2 * M_PI) + 0.5,
+                    atan2(n.y(), sqrt(n.z() * n.z() + n.x() * n.x())) / M_PI +
+                        0.5));
+
             return true;
         }
 

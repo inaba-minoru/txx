@@ -1,0 +1,240 @@
+PerspectiveCamera {
+    center 0 0 0
+    direction 0 0 -1
+    up 0 1 0
+    angle 50
+    width 1024
+    height 768
+}
+
+Materials {
+    numMaterials 18
+
+    Material {
+        diffuseColor 1 0 0
+        texture tex/background.bmp
+    }
+    Material {
+        diffuseColor 0 1 0
+        texture tex/left.bmp
+    }
+    Material {
+        diffuseColor 0 0 1
+        texture tex/bottom.bmp
+    }
+    Material {
+        diffuseColor 0.1 0 0
+        texture tex/wood-textures.bmp
+    }
+    Material {
+        diffuseColor 0.7 0.7 0.7
+    }
+    Material {
+        diffuseColor 0.5 0.5 0.5
+        texture tex/vase.bmp
+    }
+
+    Material {
+        emission 50 50 50
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/earth.bmp
+    }
+    Material {
+        dielectric
+        eta 1.5
+        diffuseColor 0.999 0.999 0.999
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/8k_sun.bmp
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/8k_mars.bmp
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/wood.bmp
+    }
+
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/2k_uranus.bmp
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/4k_venus_atmosphere.bmp
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/8k_saturn.bmp
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/jupiter_css.bmp
+    }
+    Material {
+        diffuseColor 0.4 0.4 0.4
+        texture tex/8k_mercury.bmp
+    }
+    Material {
+        diffuseColor 0.2 0.1 0
+        texture tex/wood2.bmp
+    }
+}
+
+Group {
+    numObjects 19
+
+    MaterialIndex 0
+    Transform {
+        Scale 100 100 50
+        Translate 0.25 0.2 -4
+        TriangleMesh {
+            obj_file mesh/wall.obj
+        }
+    }
+    MaterialIndex 1
+    Transform {
+        Scale 50 100 50
+        Translate -1.4 0.5 -3
+        YRotate 90
+        TriangleMesh {
+            obj_file mesh/wall.obj
+        }
+    }
+    MaterialIndex 2
+    Transform {
+        Scale 120 50 50
+        Translate 0.18 -1 -3
+        XRotate 90
+        TriangleMesh {
+            obj_file mesh/wall.obj
+        }
+    }
+    
+    MaterialIndex 17
+    Transform {
+        Scale 10 20 2
+        Translate -6 -1.5 -60
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+    Transform {
+        Scale 10 20 2
+        Translate -6 -1.5 -75
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+    MaterialIndex 3
+    Transform {
+        Scale 10 2 20
+        Translate -6 -4 -6.75
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+    MaterialIndex 4
+    Transform {
+        Scale 80 80 80
+        Translate -0.64 -0.6875 -1.62
+        YRotate 180
+        TriangleMesh {
+            obj_file mesh/bunny_1k.obj
+        }
+    }
+
+    MaterialIndex 5
+    Transform {
+        Scale 7 7 7
+        Translate -7.1429 0.3 -25.714
+        RevSurface {
+            profile BezierCurve {
+                controls
+                    [ 0 0 0 ]
+                    [ 2 0 0 ]
+                    [ 2 0 0 ]
+                    [ 2 0 0 ]
+                    [ 3 1 0 ]
+                    [ 3 4 0 ]
+                    [ 2 5 0 ]
+                    [ 3 6 0 ]
+            }
+        }
+    }
+
+    MaterialIndex 6
+    Triangle {
+        vertex0 0 50 0
+        vertex1 50 0 0
+        vertex2 50 50 -50
+    }
+
+    MaterialIndex 7
+    Sphere {
+        center 40 -27 -110
+        radius 7
+    }
+
+    MaterialIndex 8
+    Transform {
+        Scale 40 40 40
+        Translate 1 -0.56 -3.75
+        TriangleMesh {
+            obj_file mesh/dragon.obj
+        }
+    }
+    MaterialIndex 9
+    Sphere {
+        center -10 -43 -150
+        radius 7
+    }
+    MaterialIndex 10
+    Sphere {
+        center 10 -37 -120
+        radius 7
+    }
+
+    MaterialIndex 11
+    Transform {
+        Scale 25 2 25
+        Translate -2.2 0 -7.4
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+
+    MaterialIndex 12    
+    Sphere {
+        center 67 -14 -135
+        radius 7
+    }
+    MaterialIndex 13
+    Sphere {
+        center 80 0 -150
+        radius 7
+    }
+    MaterialIndex 14
+
+    Sphere {
+        center 10 -30 -180
+        radius 7
+    }
+    MaterialIndex 15
+    Sphere {
+        center 45 -10 -190
+        radius 7
+    }
+    MaterialIndex 16
+    Sphere {
+        center 67 0 -165
+        radius 7
+    }
+}

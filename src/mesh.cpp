@@ -13,17 +13,17 @@ bool Mesh::intersect(const Ray &r, Hit &h, double tmin) {
     return kdtree->intersect(r, h, tmin);
 
     // Optional: Change this brute force method into a faster one.
-    bool result = false;
-    for (int triId = 0; triId < (int)t.size(); ++triId) {
-        // TriangleIndex &triIndex = t[triId];
-        // Triangle triangle(v[triIndex[0]], v[triIndex[1]], v[triIndex[2]],
-        //   material);
-        // triangle.normal = n[triId];
-        // result |= triangle.intersect(r, h, tmin);
+    // bool result = false;
+    // for (int triId = 0; triId < (int)t.size(); ++triId) {
+    //     // TriangleIndex &triIndex = t[triId];
+    //     // Triangle triangle(v[triIndex[0]], v[triIndex[1]], v[triIndex[2]],
+    //     //   material);
+    //     // triangle.normal = n[triId];
+    //     // result |= triangle.intersect(r, h, tmin);
 
-        result |= triangles[triId]->intersect(r, h, tmin);
-    }
-    return result;
+    //     result |= triangles[triId]->intersect(r, h, tmin);
+    // }
+    // return result;
 }
 
 Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
@@ -41,6 +41,8 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
     char bslash = '/', space = ' ';
     std::string tok;
     // int texID;
+    bool flag = 0;
+
     while (true) {
         std::getline(f, line);
         if (f.eof()) {
@@ -72,7 +74,13 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
                 }
                 t.push_back(trig);
                 double t1, t2;
-                if (facess >> trig[1] >> trig.texID[1]) t.push_back(trig);
+                if (facess >> trig[1] >> trig.texID[1]) {
+                    trig[1]--;
+                    trig.texID[1]--;
+                    std::swap(trig[0], trig[2]);
+                    std::swap(trig.texID[0], trig.texID[2]);
+                    t.push_back(trig);
+                }
 
             } else {
                 TriangleIndex trig;
@@ -81,14 +89,19 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
                     trig[ii]--;
                 }
                 t.push_back(trig);
-                if (ss >> trig[1]) t.push_back(trig);
+                if (ss >> trig[1]) {
+                    trig[1]--;
+                    std::swap(trig[0], trig[2]);
+                    t.push_back(trig);
+                }
             }
         } else if (tok == texTok) {
             Vector2f texcoord;
             ss >> texcoord[0];
             ss >> texcoord[1];
             texCoord.push_back(texcoord);
-        }
+        } else if (tok == "flag")
+            flag = 1;
     }
     computeNormal();
 
@@ -98,9 +111,14 @@ Mesh::Mesh(const char *filename, Material *material) : Object3D(material) {
     vector<AABB> vec;
     for (unsigned int triId = 0; triId < t.size(); ++triId) {
         TriangleIndex &triIndex = t[triId];
-        Triangle *triangle = new Triangle(
-            v[triIndex[0]], v[triIndex[1]], v[triIndex[2]], n[triIndex[0]],
-            n[triIndex[1]], n[triIndex[2]], material);
+        Triangle *triangle;
+        if (flag)
+            triangle = new Triangle(v[triIndex[0]], v[triIndex[1]],
+                                    v[triIndex[2]], material);
+        else
+            triangle = new Triangle(v[triIndex[0]], v[triIndex[1]],
+                                    v[triIndex[2]], n[triIndex[0]],
+                                    n[triIndex[1]], n[triIndex[2]], material);
         if (triIndex.texID[0] != -1)
             triangle->setTexCoords(texCoord[triIndex.texID[0]],
                                    texCoord[triIndex.texID[1]],

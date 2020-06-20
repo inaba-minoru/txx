@@ -15,6 +15,7 @@ class Mesh : public Object3D {
     KDTree *kdtree;
 
     Mesh(const char *filename, Material *m);
+    ~Mesh() { delete kdtree; }
 
     struct TriangleIndex {
         TriangleIndex() {

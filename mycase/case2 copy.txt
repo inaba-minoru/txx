@@ -1,0 +1,127 @@
+RealisticCamera {
+    center 50 52 295.6
+    direction 0. -0.042612 -1
+    up 0 1 0
+    d 0.1
+    zi 1
+    zo 295.6
+    angle 30
+    width 1024
+    height 768
+}
+
+Materials {
+    numMaterials 8
+
+    Material {
+        diffuseColor 1 0.2 0.2
+    }
+
+    Material {
+        diffuseColor 0.2 0.2 1
+    }
+
+    Material {
+        diffuseColor 0.8 0.8 0.8
+    }
+
+    Material {
+        diffuseColor 0 0 0
+    }
+
+    Material {
+        specular
+        diffuseColor 1 1 1
+    }
+
+    Material {
+        dielectric
+        eta 1.6
+        diffuseColor 1 1 1
+    }
+
+    Material {
+        emission 12 12 12
+    }
+
+    Material {
+        diffuseColor 0.7 0.7 0.2
+    }
+}
+
+Group {
+    numObjects 11
+
+    MaterialIndex 0
+    Plane {
+        normal 1 0 0
+        offset 0
+    }
+
+    MaterialIndex 1
+    Plane {
+        normal -1 0 0
+        offset -99
+    }
+
+    MaterialIndex 2
+    Plane {
+        normal 0 0 1
+        offset -120
+    }
+
+    Plane {
+        normal 0 1 0
+        offset 0
+    }
+
+    Plane {
+        normal 0 -1 0
+        offset -81.6
+    }
+
+    MaterialIndex 3
+    Plane {
+        normal 0 0 -1
+        offset -300
+    }
+
+    MaterialIndex 4
+    Sphere {
+        center 27 16.5 0
+        radius 16.5
+    }
+
+    MaterialIndex 5
+    Sphere {
+        center 73 16.5 78
+        radius 16.5
+    }
+
+    MaterialIndex 7
+    Transform {
+        Scale 15 15 15
+        Translate 4.866666 3.1 -5.333333
+        YRotate 45
+        XRotate 45
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+    MaterialIndex 6
+    Transform {
+        Scale 15 0.1 15
+        Translate 3.333333 816 5.4
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+    Transform {
+        Scale 15 0.1 15
+        Translate 3.333333 816 -4
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+}
