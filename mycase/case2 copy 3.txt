@@ -41,7 +41,7 @@ Materials {
     }
 
     Material {
-        emission 12 12 12
+        emission 24 24 24
     }
 
     Material {
@@ -50,7 +50,7 @@ Materials {
 }
 
 Group {
-    numObjects 11
+    numObjects 10
 
     MaterialIndex 0
     Plane {
@@ -123,18 +123,8 @@ Group {
     }
 
     MaterialIndex 6
-    Transform {
-        Scale 15 0.1 15
-        Translate 3.333333 816 5.4
-        TriangleMesh {
-            obj_file mesh/cube.obj
-        }
-    }
-    Transform {
-        Scale 15 0.1 15
-        Translate 3.333333 816 -4
-        TriangleMesh {
-            obj_file mesh/cube.obj
-        }
+    Sphere {
+        center 50 40 -100
+        radius 5
     }
 }

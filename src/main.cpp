@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 
     sceneParser.getGroup()->init();
 
-    int N = 1;
+    int N = 3;
     int N2 = N * N;
     int samps_per_grid = 1;
     int samps = N2 * samps_per_grid;
